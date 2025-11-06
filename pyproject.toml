@@ -1,7 +1,7 @@
 [project]
 name = "mcp-obsidian"
-version = "0.2.1"
-description = "MCP server to work with Obsidian via the remote REST plugin"
+version = "0.2.2"
+description = "MCP server to work with Obsidian via the remote REST plugin - Enhanced fork with runtime config support"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -9,9 +9,14 @@ dependencies = [
  "python-dotenv>=1.0.1",
  "requests>=2.32.3",
 ]
+
 [[project.authors]]
 name = "Markus Pfundstein"
 email = "markus@life-electronic.nl"
+
+[[project.authors]]
+name = "Arminova"
+email = "sunboys@gmail.com"
 
 [build-system]
 requires = [ "hatchling",]

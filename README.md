@@ -1,6 +1,14 @@
-# MCP server for Obsidian
+# MCP server for Obsidian (Enhanced Fork)
 
 MCP server to interact with Obsidian via the Local REST API community plugin.
+
+**This is an enhanced fork of the original [mcp-obsidian](https://github.com/modelcontextprotocol/servers/tree/main/src/obsidian) with runtime environment variable support.**
+
+## What's New in This Fork
+
+✨ **Fixed Runtime Configuration**: Environment variables (`OBSIDIAN_HOST`, `OBSIDIAN_PORT`, `OBSIDIAN_PROTOCOL`) are now properly read at runtime, allowing you to connect to non-local Obsidian instances.
+
+The original implementation captured environment variables at module import time, causing MCP client configurations to be ignored. This fork reads configuration when tools are called, ensuring your settings are respected.
 
 <a href="https://glama.ai/mcp/servers/3wko1bhuek"><img width="380" height="200" src="https://glama.ai/mcp/servers/3wko1bhuek/badge" alt="server for Obsidian MCP server" /></a>
 
@@ -139,6 +147,37 @@ To prepare the package for distribution:
 uv sync
 ```
 
+2. Build the package:
+```bash
+uv build
+```
+
+### Testing
+
+#### Test Runtime Configuration
+
+Run the included test to verify environment variables are read correctly:
+
+```bash
+uv run python test_config.py
+```
+
+This will verify that `OBSIDIAN_HOST`, `OBSIDIAN_PORT`, and `OBSIDIAN_PROTOCOL` are properly read at runtime.
+
+#### Test with MCP Inspector
+
+Test the server with custom configuration:
+
+```bash
+OBSIDIAN_HOST=192.168.1.100 OBSIDIAN_PORT=27124 \
+npx @modelcontextprotocol/inspector uv --directory /path/to/mcp-obsidian run mcp-obsidian
+```
+
+The startup log should show:
+```
+INFO:mcp-obsidian:Obsidian API configured: http://192.168.1.100:27124
+```
+
 ### Debugging
 
 Since MCP servers run over stdio, debugging can be challenging. For the best debugging
@@ -157,3 +196,54 @@ You can also watch the server logs with this command:
 ```bash
 tail -n 20 -f ~/Library/Logs/Claude/mcp-server-mcp-obsidian.log
 ```
+
+## Publishing
+
+### To PyPI
+
+1. Build the package:
+```bash
+uv build
+```
+
+2. Publish to PyPI:
+```bash
+uv publish
+```
+
+You'll need PyPI credentials. Set them up with:
+```bash
+# Create a PyPI account at https://pypi.org/account/register/
+# Generate an API token at https://pypi.org/manage/account/token/
+# Then use:
+uv publish --username __token__ --password <your-pypi-token>
+```
+
+### Testing Before Publishing
+
+Test the built package locally:
+
+```bash
+# Install from local build
+uvx --from dist/mcp_obsidian-*.whl mcp-obsidian
+
+# Or test in a clean environment
+uv run --with ./dist/mcp_obsidian-*.whl mcp-obsidian
+```
+
+### Version Bumping
+
+Update the version in `pyproject.toml` before publishing:
+
+```toml
+[project]
+version = "0.2.2"  # Increment for bug fixes
+# or
+version = "0.3.0"  # Increment for new features
+```
+
+## Contributing
+
+This fork maintains compatibility with the original mcp-obsidian API while adding runtime configuration support. Contributions are welcome!
+
+See [doc/](doc/) for detailed architecture documentation.
