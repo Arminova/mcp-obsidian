@@ -3,7 +3,6 @@ import logging
 from collections.abc import Sequence
 from functools import lru_cache
 from typing import Any
-import os
 from dotenv import load_dotenv
 from mcp.server import Server
 from mcp.types import (
@@ -16,16 +15,19 @@ from mcp.types import (
 load_dotenv()
 
 from . import tools
-
-# Load environment variables
+from .config import get_obsidian_config
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp-obsidian")
 
-api_key = os.getenv("OBSIDIAN_API_KEY")
-if not api_key:
-    raise ValueError(f"OBSIDIAN_API_KEY environment variable required. Working directory: {os.getcwd()}")
+# Validate config early at startup
+try:
+    config = get_obsidian_config()
+    logger.info(f"Obsidian API configured: {config.protocol}://{config.host}:{config.port}")
+except ValueError as e:
+    logger.error(f"Configuration error: {e}")
+    raise
 
 app = Server("mcp-obsidian")
 
